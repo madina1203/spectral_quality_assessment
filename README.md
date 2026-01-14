@@ -154,7 +154,7 @@ python scripts/inference/predict_lance_all.py \
 ### Option B: Inference on Custom Data
 To run the model on your own data, you must first convert your `.raw` or `.mzML` files into the Lance format required by the model.
 
-1. **Preprocess Data**: Follow the instructions in [Preprocessing Custom Data](#Data Preprocessing Pipeline) to generate a Lance dataset from your files.
+1. **Preprocess Data**: Follow the instructions in [`docs/DATA_PREPROCESSING.md`] to generate a Lance dataset from your files.
 2. **Run Prediction**:
 
    ```bash
