@@ -1,0 +1,43 @@
+dataset_id;lab;lab_key;ms2;species;Number of runs;number_of_mzmls_considered;number_of_MS2s_taken
+MSV000098297;"maoshuoqin;maoshuoqin@mail.ccmu.edu.cn;School of Basic Medical Sciences, Capital Medical University, Beijing;China";maoshuoqin@mail.ccmu.edu.cn;11080704;NCBITaxon:9606;1041.0;28;298938
+MSV000096347;"Paul Abraham;abrahampe@ornl.gov;ORNL;United States";abrahampe@ornl.gov;7803163;NCBITaxon:3694;976.0;38;299565
+MSV000098437;"Shirley M. Tsunoda;smtsunoda@ucsd.edu;University of California San Diego;USA";smtsunoda@ucsd.edu;4105109;NCBITaxon:9606;1376.0;101;299990
+MSV000098293;"Pam Ronald;pcronald@ucdavis.edu;UC Davis;United States";pcronald@ucdavis.edu;3752184;Arabidopsis;796.0;75;299903
+MSV000096860;"Weisi;weisi@nju.edu.cn;Nanjing University;China";weisi@nju.edu.cn;3589760;environmental sample wastewater;210.0;18;299844
+MSV000098287;Gabriel Castrillo;gabriel castrillo;2486971;Spirodela polyrhiza;324.0;37;298344
+MSV000096359;"Lindsey Burnett;liburnett@health.ucsd.edu;University of California San Diego;United States";liburnett@health.ucsd.edu;2374064;NCBITaxon:9606;759.0;94;297408
+MSV000098286;Debashish Bhattacharya;debashish bhattacharya;1837462;soil microbiome;312.0;50;298861
+MSV000096317;"Alicia Purcell;amp753@nau.edu;Northern Arizona University;United States";amp753@nau.edu;1504582;glacier microbiome;244.0;50;297401
+MSV000092256;Dean E. Riechers;dean e. riechers;1360883;NCBITaxon:4565;95.0;20;286399
+MSV000099130;Mauricio Caraballo;mauricio caraballo;897361;Several;161.0;53;296325
+MSV000098289;"Tiffany Lowe-Power;tlowepower@ucdavis.edu;UC Davis;United States";tlowepower@ucdavis.edu;879127;Solanum lycopersicum root exudate;132.0;44;297837
+MSV000095726;Lindsey Burnett (liburnett@health.ucsd.edu), University of California San Diego, United States;liburnett@health.ucsd.edu;861231;Homo sapiens (NCBITaxon:9606);274.0;94;297775
+MSV000095811;Guillaume Chesneau (gchesneau@mpipz.mpg.de), Max Planck for Plant Breeding, Germany;gchesneau@mpipz.mpg.de;535043;Communities of Bacterial and Fungal strains;171.0;94;297539
+MSV000088843;Fabian Rivera;fabian rivera;364110;NCBITaxon:10095;176.0;134;287582
+MSV000095899;heri Floge (floges@wfu.edu), Wake Forest University, USATrent Northen (trnorthen@lbl.gov), Lawrence Berkeley National Laboratory, USA;floges@wfu.edu;307090;Synechococcus cyanophage S-SSM5 (NCBITaxon:382281) | Synechococcus sp. WH 8102 (NCBITaxon:84588);124.0;121;299755
+MSV000096729;"David Gonzalez;djgonzalez@ucsd.edu;UCSD;United States";djgonzalez@ucsd.edu;281285;NCBITaxon:9606;105.0;105;281285
+MSV000088723;Aaron Hartmann;aaron hartmann;267476;NCBITaxon:33858;47.0;40;234156
+MSV000087935;Will Kew (william.kew@pnnl.gov), PNNL, United States;william.kew@pnnl.gov;200034;Synechococcus (NCBITaxon:1129);34.0;30;176512
+MSV000095787;Pieter C. Dorrestein (pdorrestein@ucsd.edu), University of California at San Diego, USA;pdorrestein@ucsd.edu;17643;Homo sapiens (NCBITaxon:9606);6.0;6;17643
+MSV000095764;Pieter C. Dorrestein (pdorrestein@ucsd.edu), University of California at San Diego, USA;pdorrestein@ucsd.edu;3030;synthetic construct (NCBITaxon:32630);2.0;2;3030
+MSV000095996;Pieter C. Dorrestein (pdorrestein@ucsd.edu), University of California at San Diego, USA;pdorrestein@ucsd.edu;103594;Homo sapiens (NCBITaxon:9606);27.0;24;92865
+MSV000095889;Fabian Rivera (fcrivera@health.ucsd.edu), University of California San Diego, USA;fcrivera@health.ucsd.edu;361125;Mus musculus (NCBITaxon:10090);137.0;113;297821
+MSV000093868;Heejung Yang (heejyang@kangwon.ac.kr), Kangwon National University, Republic of Korea;heejyang@kangwon.ac.kr;844842;Compositae;126.0;44;294479
+MSV000098518;"Mi Zhang;zhangmi495@gmail.com;Toho University;Japan|Kouharu Otsuki;kouharu.otsuki@phar.toho-u.ac.jp;Toho University;Japan|Takashi Kikuchi;takashi.kikuchi@phar.toho-u.ac.jp;Toho University;Japan|Wei Li;liwei@phar.toho-u.ac.jp;Toho University;Japan";zhangmi495@gmail.com;239862;"NCBITaxon:66679;NCBITaxon:142693;NCBITaxon:142737;NCBITaxon:142180";124.0;124;239862
+MSV000088023;Martin Hansen (martin.hansen@envs.au.dk), Aarhus University, Denmark;martin.hansen@envs.au.dk;36739;Mus musculus (NCBITaxon:10090);6.0;6;36739
+MSV000092187;Ralph Urbatzka (rurbatzka@ciimar.up.pt), CIIMAR, Portugal;rurbatzka@ciimar.up.pt;35070;Danio rerio (NCBITaxon:7955);11.0;9;29216
+MSV000086956;Hosein Mohimani;;27117;296|Pseudomonas fragi;36.0;36;27117
+MSV000098306;"Edward T. Chouchani;EdwardT_Chouchani@DFCI.HARVARD.EDU;Dana Farber Cancer Institue;USA";EdwardT_Chouchani@DFCI.HARVARD.EDU;19225;"NCBITaxon:10090;NCBITaxon:9606";2.0;2;19225
+MSV000097074;"Mariana Alves Reis;mreis@ciimar.up.pt;CIIMAR;Portugal";mreis@ciimar.up.pt;12274;Lusitaniella coriacea LEGE 07167;5.0;5;12274
+MSV000096582;"Xiaoyang Su;xs137@rwjms.rutgers.edu;Rutgers Cancer Institute of New Jersey;USA";xs137@rwjms.rutgers.edu;24668;"NCBITaxon:46704;NCBITaxon:1491507";3.0;3;24668
+MSV000093869;Heejung Yang (heejyang@kangwon.ac.kr), Kangwon National University, Republic of Korea;heejyang@kangwon.ac.kr;290806;Piper nigrum;47.0;47;290806
+MSV000091905;Shawn Campagna (campagna@utk.edu), University of Tennessee Knoxville, USA;;389811;Escherichia coli BW25113 (NCBITaxon:679895);31.0;23;289152
+MSV000095364;Daniel Bolnick (daniel.bolnick@uconn.edu), University of Connecticut, USA;;27349;;11.0;6;15039
+MSV000099141;Bradley S. Moore (bsmoore@ucsd.edu), Scripps Institute of Oceanography, United States Richard Gallo (Rgallo@UCSD.edu), University of California San Diego, United States Username ;;68798;Staphylococcus epidermidis (NCBITaxon:1282);12.0;9;52459
+MSV000093813;A.J. Marian Walhout;;94864;NCBITaxon:6239;8.0;8;94864
+MSV000083766;Bernhard Palsson;;159622;NCBITaxon:1280;87.0;52;110250
+MSV000092254;Dr. Edward Owusu-Ansah;;13705;NCBITaxon:7227;6.0;6;13705
+MSV000083372;Forest Rohwer;;154102;Coral;71.0;68;148706
+MSV000087702;Georg Pohnert;;193762;NCBITaxon:1129|NCBITaxon:33858;42.0;36;169083
+MSV000088937;Daniel Petras;daniel.petras@uni-tuebingen.de;1759211;environmental samples|NCBITaxon:282487;351.0;59;298787
+MSV000088732;Daniel Petras;daniel.petras@uni-tuebingen.de;559185;;;58;299921

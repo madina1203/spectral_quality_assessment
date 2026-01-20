@@ -1,0 +1,12 @@
+dataset_id;lab;lab_key;ms2;species;Number of runs;number_of_mzmls_considered;number_of_MS2s_taken
+MSV000098291;"Sabeeha Merchant;sabeeha@berkeley.edu;UC Berkeley;United States";sabeeha@berkeley.edu;3232698;"Chlamydomonas reinhardtii CC5390; Brevundimonas sp.";478.0;16;98994
+MSV000097708;"Sarkis Mazmanian;sarkis@caltech.edu;California Institute of Technology;United States";sarkis@caltech.edu;1406247;NCBITaxon:10090;348.0;24;99791
+MSV000084364;Jacob Agerbo Rasmussen;jacob agerbo rasmussen;1141177;NCBITaxon:8022;85.0;7;95180
+MSV000098284;"Jonelle Basso;JBasso@lbl.gov;Lawrence Berkeley National Laboratory;United States";jbasso@lbl.gov;896645;Arabidopsis microbiome;152.0;19;98928
+MSV000090950;"Amir Zarrinpar;azarrinpar@ucsd.edu;University of California San Diego;USA";azarrinpar@ucsd.edu;386700;NCBITaxon:10090;237.0;60;99831
+MSV000098817;"Hiroshi Otani;HOtani@lbl.gov;LBL;United States";hotani@lbl.gov;252923;Streptomyces coelicolor;52.0;19;99795
+MSV000095922;"Malak M. Tfaily (tfaily@arizona.edu), University of Arizona, United States;tfaily@arizona.edu";;237221;Eragrostis lehmanniana | Digitaria californica;234.0;98;99712
+MSV000095790;xingguo liu (liu_xingguo@gibh.ac.cn), Guangzhou Institutes of Biomedicine and Health Chinese Academy of Science, China;;189335;Homo sapiens (NCBITaxon:9606);6.0;3;90461
+MSV000099114;Allegra Aron;;37869;NCBITaxon:270351;11.0;7;26633
+MSV000098549;Kalyani Pyaram,University of Kansas Medical Center;;14388;CD4+ T-cells;;1;14388
+MSV000095703;Bret Cooper;;81719;Penicillium (NCBITaxon:5073);;10;81719
