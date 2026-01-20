@@ -182,6 +182,21 @@ For detailed training instructions, see [`docs/TRAINING.md`](docs/TRAINING.md).
 
 Training involves a multi-stage pipeline designed for PU learning. You may train using the provided Zenodo datasets or your own preprocessed Lance datasets.
 
+### Computational Environment
+
+All models were trained and tested on a high-performance computing (HPC) cluster node equipped with:
+- **CPUs**: Dual Intel Xeon Gold 5320 (2.20 GHz)
+- **GPUs**: 4× NVIDIA A100 (80 GB)
+
+
+Training was performed using distributed data parallelism across 2 GPUs with the following SLURM configuration:
+```bash
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=200G
+```
+
 ### Training Pipeline Summary
 1. **BCE Pre-training**: Train separate models for positive and negative polarities using Binary Cross-Entropy loss.
 2. **Prior Estimation**: Use the best BCE models to estimate the class prior ($\pi$) on a held-out validation set (Test Set 1).
