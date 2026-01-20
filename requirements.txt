@@ -2,7 +2,7 @@ altair @ file:///croot/altair_1687526041770/work
 annotated-types==0.7.0
 appdirs==1.4.4
 attrs @ file:///croot/attrs_1734533101012/work
-azure-core==1.35.1
+azure-core==1.38.0
 azure-storage-blob==12.26.0
 azure-storage-file-datalake==12.21.0
 boto3==1.40.36
