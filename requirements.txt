@@ -32,7 +32,7 @@ einops==0.8.0
 emcee==3.1.6
 fastobo==0.12.3
 filelock @ file:///croot/filelock_1700591183607/work
-fonttools==4.55.3
+fonttools==4.60.2
 fsspec @ file:///home/conda/feedstock_root/build_artifacts/fsspec_1734650190311/work
 gmpy2 @ file:///work/ci_py311/gmpy2_1676839849213/work
 google-api-core==2.25.1
