@@ -276,29 +276,110 @@ The script will add two columns to track sampling:
 - `number_of_mzmls_considered`: Number of mzML files processed
 - `number_of_MS2s_taken`: Number of MS2 scans included after sampling
 
-**Example Test Set CSV** (`test_datasets.csv`):
-```
-dataset_id;ms2;species;lab
-MSV000012345;150000;human;lab1
-MSV000067890;80000;mouse;lab2
-```
 
-**Handling Large Datasets**:
 
-For datasets with many small files where individual file sampling doesn't work well, use `--exceptional_dataset_ids` to enable MS1-grouped sampling:
+---
+
+## Creating Lance Datasets for Inference 
+
+For creating inference or test Lance datasets without the need to download the Massive datasets from training split, use the dedicated script `create_lance_inference.py`. This script uses **precomputed training set statistics** from a JSON file to standardize features, ensuring consistency between our training and new inference data. The code randomly selects .csv files from each dataset to accumulate a total of 100,000 samples per dataset
+**Key Features**:
+- Uses precomputed training set statistics (mean/std) from JSON file
+- Creates Lance dataset only for inference data
+- Extracts precursor m/z directly from mzML files
+- Excludes blank files automatically
+- Applies same feature standardization as training data
+
+**Usage**:
 
 ```bash
-python scripts/data_preprocessing/create_lance_test_one_hot.py \
-    --train_file_list data/file_paths/file_paths_train.txt \
-    --test_file_list data/file_paths/file_paths_test.txt \
-    --lance_uri data/lance_data_test_set \
+python scripts/data_preprocessing/create_lance_inference.py \
+    --stats_file data/metadata/training_stats.json \
+    --test_file_list data/file_paths/file_paths_inference.txt \
+    --lance_uri data/lance_data_inference \
     --test_table test_data \
+    --workers 16 \
     --cap_test_set 100000 \
-    --test_set_csv data/metadata/test_datasets.csv \
-    --exceptional_dataset_ids MSV000012345 MSV000067890 \
-    --skip_train
+    --test_set_csv data/metadata/inference_datasets.csv
 ```
 
-This processes exceptional datasets serially and samples by MS1 scan groups to ensure all MS2 scans from the same MS1 precursor are kept together.
+**Key Arguments**:
+
+| Argument | Description |
+|----------|-------------|
+| `--stats_file` | **Required.** Path to JSON file with training set statistics (mean/std for each feature) .Curent location: `data/metadata/training_stats.json` |
+| `--test_file_list` | Path to inference file list (mzML,csv pairs) |
+| `--lance_uri` | Output directory for Lance dataset |
+| `--test_table` | Table name for inference data (default: `test_data`) |
+| `--cap_test_set` | Maximum MS2 scans per dataset (-1 for no cap) |
+| `--test_set_csv` | CSV file with dataset metadata (must contain `dataset_id` and `ms2` (indicates the total number of MS2 scans across all runs present in the dataset) columns, semicolon-delimited) |
+| `--exceptional_dataset_ids` | List of dataset IDs requiring special serial processing (for very large datasets having many runs) |
+| `--batch_size` | Number of files to process per batch (default: 10) |
+| `--workers` | Number of parallel workers |
+| `--max_peaks` | Maximum peaks per spectrum (default: 400) |
+
+**Training Set Statistics JSON File**:
+
+The `--stats_file` argument requires a JSON file containing mean and standard deviation for each numerical feature index. This file should be created from your training data.
+
+**Recommended location**: `data/metadata/training_stats.json`
+
+**JSON Format**:
+```json
+{
+    "0": {"mean": 2.5, "std": 0.8},
+    "1": {"mean": 3.2, "std": 1.1},
+    "2": {"mean": 100.5, "std": 25.3},
+    ...
+}
+```
+
+Where:
+- Keys are feature indices as strings ("0" through "13" for the 14 numerical features)
+- Each value contains `"mean"` and `"std"` for that feature
+- Features correspond to the columns returned by `get_instrument_settings_columns()`:
+  0. MS2 Isolation Width
+  1. Charge State
+  2. Ion Injection Time (ms)
+  3. Conversion Parameter C
+  4. Energy1
+  5. Orbitrap Resolution
+  6. AGC Target
+  7. HCD Energy(1)
+  8. HCD Energy(2)
+  9. HCD Energy(3)
+  10. HCD Energy(4)
+  11. HCD Energy(5)
+  12. LM m/z-Correction (ppm)
+  13. Micro Scan Count
+
+**How to Generate Training Statistics JSON**:
+
+You can generate this file from your training data using the `create_lance_add_one_hot.py` script, which computes statistics during training dataset creation. Alternatively, you can compute it manually from your training CSV files by calculating mean and std for each of the 14 numerical instrument setting columns.
+
+**Using SLURM Script**:
+
+For running on a SLURM cluster, use the provided script:
+
+```bash
+# Before running, edit the script to update:
+# 1. Project directory path (cd /path/to/your/working/directory)
+# 2. SLURM account name (--account=YOUR_ACCOUNT)
+# 3. Email address (--mail-user=YOUR_EMAIL@example.com)
+# 4. Adjust resource requirements if needed (cpus-per-task, mem, time)
+
+sbatch slurm_scripts/data_preprocessing/run_build_lance_inference.sh
+```
+
+The script will:
+- Load the conda environment
+- Verify required packages are installed
+- Run the inference Lance creation script
+- Display dataset statistics upon completion
+
+Make sure you have:
+- Created the training statistics JSON file at `data/metadata/training_stats.json`
+- Created the inference file list at `data/file_paths/file_paths_inference.txt`
+- Created the inference metadata CSV at `data/metadata/inference_datasets.csv` (if using reporting)
 
 
