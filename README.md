@@ -1,11 +1,8 @@
-# Influence of Instrument Settings on Quality of MS2 Spectra
+# Positive-Unlabeled Learning for Predicting Small Molecule MS2 Identifiability from MS1 Context and Acquisition Parameters
 
-This repository contains the complete pipeline for training a model that predicts the quality of MS2 spectra based on provided MS1 spectra and instrument configurations used to generate consecutive MS2 scans.
+This repository contains the complete pipeline for training a model that predicts the identifiability of MS2 spectra based on provided MS1 spectra and instrument configurations used to generate consecutive MS2 scans.
 
 The approach utilizes **Positive-Unlabeled (PU) Learning** to train models using only positive examples (library-matched spectra) and unlabeled data. It features a **Transformer-based architecture** (using the `depthcharge` library) to encode spectra and incorporates acquisition parameters as features. To handle large-scale spectral data efficiently, the project utilizes the **Lance** data format.
-
-
-
 
 ## Repository Structure
 
@@ -105,8 +102,6 @@ conda env create -f environment.yml
 conda activate instrument_setting
 ```
 
-
-
 **External Tools** :
 If you intend to process **raw data** (convert `.raw` files to the Lance format used by the model), you must install the following tools in the `tools/` directory. If you only plan to use the pre-processed data from Zenodo, these are not required.
 
@@ -115,7 +110,6 @@ If you intend to process **raw data** (convert `.raw` files to the Lance format 
 
 Please refer to [`tools/README.md`](tools/README.md) for installation instructions.
 > **Note**: External tools are not required if using pre-processed data from Zenodo
-
 
 ## Data and Model Availability
 
@@ -224,6 +218,7 @@ python scripts/inference/predict_lance_diff_polarity_one_hot.py \
     --polarity 1
     
   ```
+
 ### 3. nnPU model Training
 Train the final model using the priors estimates.
 
@@ -235,8 +230,6 @@ sbatch slurm_scripts/training/run_train_nnpu_loss.sh
 - Prior estimates (`--prior_pos` and `--prior_neg`)
 - Paths to Lance datasets
 - Hyperparameters (learning rates, batch size, etc.)
-
-
 
 ### (Optional) Preparing Data from Scratch
 
@@ -274,5 +267,3 @@ See detailed instructions in `docs/DATA_PREPROCESSING.md` for:
 ## License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
-
-
