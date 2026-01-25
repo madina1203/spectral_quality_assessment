@@ -90,12 +90,14 @@ spectral_quality_assessment/
 - Conda 
 - Access to a computing cluster (recommended for full pipeline)
 
-### Environment Setup
+> **Note**: This project has been tested and run on a Linux environment HPC cluster.
+
+### Conda Environment 
 
 ```bash
 # Clone the repository
-git clone git@github.com:madina1203/spectral_quality_assessment.git
-cd spectral_quality_assessment
+git clone https://github.com/bittremieuxlab/pu_ms2_identifiability.git
+cd pu_ms2_identifiability
 
 # Create and activate conda environment
 conda env create -f environment.yml

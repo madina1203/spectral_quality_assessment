@@ -166,7 +166,6 @@ class LanceBatchCollator:
         if dataset_ids is not None:
             # dataset_ids will be a list of strings, just pass it along
             batch_dict["dataset_id"] = dataset_ids
-            script_logger.info("Dataset IDs are present ")
 
         return batch_dict
 
