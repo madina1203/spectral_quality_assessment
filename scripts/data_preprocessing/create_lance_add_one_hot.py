@@ -1,4 +1,18 @@
 #!/usr/bin/env python
+"""
+Lance Dataset Builder for Training set
+
+Converts paired mzML + CSV files into Lance format for efficient model training.
+Extracts MS1/MS2 scan pairs, applies  preprocessing, standardizes
+instrument settings, and one-hot encodes categorical features.
+
+Features:
+    - Parallel processing of mzML/CSV file pairs
+    - Global feature standardization across datasets
+    - Per-dataset MS2 count capping with random sampling
+    - Support for exceptional datasets requiring serial processing
+"""
+
 import os
 import re
 import argparse
@@ -16,7 +30,7 @@ import psutil
 import random
 
 random.seed(42)
-# Setup logging
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -33,9 +47,13 @@ def get_scan_number(id_string: str) -> int:
 
 def get_one_hot_vector(value: float) -> List[float]:
     """
-    Converts binary 0/1 value to One-Hot Vector.
-    0 -> [1.0, 0.0]
-    1 -> [0.0, 1.0]
+    Convert binary value to one-hot encoding.
+    
+    Args:
+        value: Binary value (0 or 1)
+        
+    Returns:
+        [1.0, 0.0] for 0, [0.0, 1.0] for 1, [0.0, 0.0] for invalid/NaN
     """
     try:
         val_int = int(value)
@@ -44,18 +62,13 @@ def get_one_hot_vector(value: float) -> List[float]:
         elif val_int == 1:
             return [0.0, 1.0]
         else:
-            # Fallback for unexpected values (treat as 0 or handle error)
             return [1.0, 0.0]
     except (ValueError, TypeError):
-        # Fallback for NaNs
         return [0.0, 0.0]
 
 
 def get_instrument_settings_columns() -> List[str]:
-    """
-    Returns the list of NUMERICAL columns to be standardized.
-    REMOVED: 'Polarity', 'Ionization', 'Mild Trapping Mode', 'Activation1'
-    """
+    """Return numerical instrument setting columns for standardization."""
     return [
         "MS2 Isolation Width",
         "Charge State",
@@ -75,7 +88,16 @@ def get_instrument_settings_columns() -> List[str]:
 
 
 def load_and_preprocess_scans(mzml_file: str, max_peaks: int = 400) -> List[Dict[str, Any]]:
-    """Loads and preprocesses spectra from an mzML file, extracting precursor m/z for MS2."""
+    """
+    Load and preprocess spectra from an mzML file.
+    
+    Args:
+        mzml_file: Path to mzML file
+        max_peaks: Maximum number of peaks to retain after filtering
+        
+    Returns:
+        List of scan dictionaries with preprocessed spectral data
+    """
     scan_list = []
 
     if not os.path.exists(mzml_file):
@@ -94,12 +116,9 @@ def load_and_preprocess_scans(mzml_file: str, max_peaks: int = 400) -> List[Dict
 
                 mz_array = spectrum.get("m/z array")
                 intensity_array = spectrum.get("intensity array")
-
-                # Initialize precursor_mz (defaults to 0.0 or NaN)
                 mzml_precursor_mz = 0.0
 
                 try:
-                    # 1. Preprocess MS1 spectra
                     if ms_level == 1:
                         mz_spectrum = sus.MsmsSpectrum(
                             identifier=str(scan_number),
@@ -109,21 +128,16 @@ def load_and_preprocess_scans(mzml_file: str, max_peaks: int = 400) -> List[Dict
                             intensity=intensity_array,
                             retention_time=spectrum.get("scan start time", 0),
                         )
-                        # Apply preprocessing
                         mz_spectrum = mz_spectrum.filter_intensity(
                             min_intensity=0.01, max_num_peaks=max_peaks
                         )
                         mz_spectrum = mz_spectrum.scale_intensity(scaling="root")
-
                         mz_array = mz_spectrum.mz
                         intensity_array = mz_spectrum.intensity
 
-                    # 2. Extract Precursor m/z from MS2 spectra (FROM MZML)
                     elif ms_level == 2:
-                        # Pyteomics nested dictionary structure
                         precursors = spectrum.get("precursorList", {}).get("precursor", [])
                         if precursors:
-                            # Typically take the first precursor
                             selected_ions = (
                                 precursors[0].get("selectedIonList", {}).get("selectedIon", [])
                             )
@@ -138,7 +152,7 @@ def load_and_preprocess_scans(mzml_file: str, max_peaks: int = 400) -> List[Dict
                             "ms_level": ms_level,
                             "mz_array": mz_array,
                             "intensity_array": intensity_array,
-                            "precursor_mz": mzml_precursor_mz,  # <-- Storing extracted value here
+                            "precursor_mz": mzml_precursor_mz,
                         }
                     )
 
@@ -179,7 +193,7 @@ def load_ms2_data(csv_file: str) -> pd.DataFrame:
 
 
 def compute_stats(ms2_data: pd.DataFrame) -> Dict[int, Dict[str, float]]:
-    """Computes mean and std for instrument settings for standardization."""
+    """Compute mean and std for each numerical instrument setting column."""
     instrument_settings_cols = get_instrument_settings_columns()
     all_settings = []
 
@@ -205,7 +219,7 @@ def compute_stats(ms2_data: pd.DataFrame) -> Dict[int, Dict[str, float]]:
 def scale_features(
     instrument_settings: List[float], feature_stats: Dict[int, Dict[str, float]]
 ) -> np.ndarray:
-    """Standardize the instrument settings."""
+    """Apply z-score standardization to instrument settings using precomputed stats."""
     scaled_settings = []
     for i, value in enumerate(instrument_settings):
         if i in feature_stats:
@@ -222,7 +236,6 @@ def scale_features(
     return np.array(scaled_settings, dtype=np.float32)
 
 
-# --- MODIFIED FUNCTION 2: Use Precursor from Scan List ---
 def align_and_format_data(
     scan_list: List[Dict[str, Any]],
     ms2_data: pd.DataFrame,
@@ -231,14 +244,27 @@ def align_and_format_data(
     dataset_id: str,
     mzml_filepath: str,
 ) -> List[Dict[str, Any]]:
-    """Aligns MS1 and MS2 scans, applies scaling, and formats for Lance."""
+    """
+    Align MS1/MS2 scan pairs and format for Lance storage.
+    
+    Each MS2 scan is paired with its preceding MS1 scan. Instrument settings
+    are standardized (numerical) or one-hot encoded (categorical).
+    
+    Args:
+        scan_list: List of preprocessed scans from mzML
+        ms2_data: DataFrame with MS2 metadata from CSV
+        feature_stats: Global mean/std for numerical feature standardization
+        source_file: Base filename for provenance
+        dataset_id: MassIVE dataset identifier
+        mzml_filepath: Full path to source mzML file
+        
+    Returns:
+        List of formatted data pairs ready for Lance storage
+    """
     data_pairs = []
     ms2_scan_info = ms2_data.set_index("Scan").to_dict("index")
 
-    # 1. Numerical columns to be standardized
     numerical_cols = get_instrument_settings_columns()
-
-    # Define the 4 categorical columns we need to check manually
     categorical_cols = ["Polarity", "Ionization", "Mild Trapping Mode", "Activation1"]
 
     current_ms1_data = None
@@ -260,7 +286,6 @@ def align_and_format_data(
                 ms2_info = ms2_scan_info[scan_number]
                 compound_name = ms2_info.get("Compound_name", "")
 
-                # 2. Extract Numerical Settings
                 raw_numerical_settings = []
                 valid_row = True
 
@@ -271,7 +296,6 @@ def align_and_format_data(
                         break
                     raw_numerical_settings.append(float(val))
 
-                # 3. Check for existence of Categorical columns
                 for cat_col in categorical_cols:
                     if pd.isna(ms2_info.get(cat_col)):
                         valid_row = False
@@ -280,25 +304,13 @@ def align_and_format_data(
                 if not valid_row:
                     continue
 
-                # 4. Scale ONLY the numerical settings
                 scaled_settings = scale_features(raw_numerical_settings, feature_stats)
 
-                # 5. One-Hot Encode the 4 categorical columns
-                # Helper logic: 0 -> [1, 0], 1 -> [0, 1]
-
-                # Polarity (0 or 1)
                 polarity_ohe = get_one_hot_vector(ms2_info.get("Polarity"))
-
-                # Ionization (NSI=0, ESI=1)
                 ionization_ohe = get_one_hot_vector(ms2_info.get("Ionization"))
-
-                # Mild Trapping Mode (Off=0, On=1)
                 trapping_ohe = get_one_hot_vector(ms2_info.get("Mild Trapping Mode"))
-
-                # Activation1 (Others=0, HCD=1)
                 activation_ohe = get_one_hot_vector(ms2_info.get("Activation1"))
 
-                # 6. Concatenate everything
                 final_instrument_settings = np.concatenate(
                     [scaled_settings, polarity_ohe, ionization_ohe, trapping_ohe, activation_ohe]
                 ).astype(np.float32)
@@ -328,7 +340,7 @@ def align_and_format_data(
 def process_single_file(
     args: Tuple[str, str, str, Dict[int, Dict[str, float]], int, int, int],
 ) -> List[Dict[str, Any]]:
-    """Process a single mzML-CSV pair. Designed to run in parallel."""
+    """Process a single mzML-CSV file pair (parallelizable worker function)."""
     mzml_file, csv_file, dataset_id, feature_stats, file_idx, total_files, max_peaks = args
     process = psutil.Process()
     file_base = os.path.basename(mzml_file).split(".")[0]
@@ -371,8 +383,14 @@ def process_exceptional_dataset(
     max_peaks: int,
 ) -> Tuple[List[Dict[str, Any]], int, int]:
     """
-    Processes an exceptional dataset serially to sample by MS1-grouped MS2 scans.
-    Returns: (sampled_data_pairs, total_files_processed, total_ms2s_taken)
+    Process large datasets serially with MS1-grouped sampling.
+    
+    For datasets too large for standard file-level sampling, this loads all
+    data first, then samples complete MS1 groups (preserving MS1-MS2 pairs)
+    until reaching the cap.
+    
+    Returns:
+        Tuple of (sampled_data_pairs, files_processed, ms2_count)
     """
     logger.warning(
         f"  Starting serial processing for {len(pairs_for_dataset)} files... This may take a while."
@@ -451,7 +469,7 @@ def process_exceptional_dataset(
 def save_to_lance_batch(
     data_batch: List[Dict[str, Any]], dataset_path: str, mode: str = "overwrite"
 ):
-    """Saves a batch of data to a Lance dataset."""
+    """Write a batch of processed data pairs to Lance dataset."""
     if not data_batch:
         return
 
@@ -482,7 +500,7 @@ def save_to_lance_batch(
 def load_file_pairs(
     file_list_path: str, test_mode: bool = False, max_files: int = 3, exclude_blank: bool = False
 ) -> List[Tuple[str, str]]:
-    """Loads and parses the file list text file."""
+    """Load mzML/CSV file pairs from a text file (one pair per line, comma-separated)."""
     if not os.path.exists(file_list_path):
         logger.error(f"File list not found: {file_list_path}")
         return []
@@ -525,7 +543,7 @@ def load_file_pairs(
 
 
 def compute_global_stats(file_pairs: List[Tuple[str, str]]) -> Dict[int, Dict[str, float]]:
-    """Computes global feature stats from a list of file pairs."""
+    """Compute global mean/std statistics across all CSV files for feature standardization."""
     logger.info(
         f"\n--- Step 1: Computing global feature statistics from {len(file_pairs)} files ---"
     )
@@ -560,7 +578,12 @@ def process_file_list(
     reporting_csv_path: str = None,
     exceptional_dataset_ids: List[str] = None,
 ):
-    """Main function to process files in batches."""
+    """
+    Process file pairs in batches and write to Lance dataset.
+    
+    Groups files by dataset ID, applies per-dataset MS2 capping if specified,
+    and processes files in parallel batches.
+    """
     logger.info(f"\n{'=' * 80}")
     logger.info(f"Starting processing for: {table_name.upper()}")
     logger.info(f"{'=' * 80}")
@@ -763,20 +786,24 @@ def parse_args():
 
 
 def load_reporting_df(csv_path: str) -> pd.DataFrame:
-    """Loads and prepares the reporting DataFrame."""
+    """
+    Load dataset reporting CSV with MS2 counts per dataset.
+    
+    Args:
+        csv_path: Path to semicolon-delimited CSV with dataset_id and ms2 columns
+        
+    Returns:
+        DataFrame indexed by dataset_id, or None if loading fails
+    """
     if not os.path.exists(csv_path):
         logger.error(f"Reporting CSV not found: {csv_path}")
         return None
     try:
-        # 1. Read the CSV
         df = pd.read_csv(csv_path, delimiter=";")
 
-        # 2. Force conversion to numeric, turning any blanks/errors into NaN
-        # Then fill NaN with 0 and convert to int.
         if "ms2" in df.columns:
             df["ms2"] = pd.to_numeric(df["ms2"], errors="coerce").fillna(0).astype(int)
 
-        # 3. Standardize other tracking columns
         df["number_of_mzmls_considered"] = (
             pd.to_numeric(df.get("number_of_mzmls_considered", 0), errors="coerce")
             .fillna(0)
