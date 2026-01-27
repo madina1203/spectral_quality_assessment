@@ -171,14 +171,14 @@ def main():
         description="Analyze spectral interference excluding isotope peaks"
     )
     parser.add_argument('--input_csv', type=str, required=True, 
-                        help="Path to CSV with predictions (requires: mzml_filepath, scan_number, label, probability)")
+                        help="Path to CSV with model predictions (requires: mzml_filepath, scan_number, label, probability)")
     parser.add_argument('--delta', type=float, default=1.003355, 
                         help="Isotope mass difference in Da (default: 1.003355 for C13)")
     parser.add_argument('--ppm', type=float, default=20.0, 
                         help="PPM tolerance for isotope peak masking (default: 20)")
     args = parser.parse_args()
 
-    output_dir = 'results/plots_14_01'
+    output_dir = 'results/plots_interference'
     os.makedirs(output_dir, exist_ok=True)
 
     df = pd.read_csv(args.input_csv)
