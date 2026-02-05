@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 import multiprocessing as mp
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 try:
     from src.transformers.model_bce_loss_one_hot import SimpleSpectraTransformer
 except ImportError:

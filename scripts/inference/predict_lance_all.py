@@ -12,7 +12,7 @@ from tqdm import tqdm
 import multiprocessing as mp
 
 # Ensure parent directory is in path for imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 try:
     from src.transformers.model_nn_pu_loss_detach_diff_polarity import SimpleSpectraTransformer

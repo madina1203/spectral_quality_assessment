@@ -19,7 +19,7 @@ os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 import sys
 import multiprocessing as mp
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 import torch
 import torch.nn as nn
 import lightning.pytorch as pl
